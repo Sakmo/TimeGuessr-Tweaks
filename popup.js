@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const blinkingTimerToggle = document.getElementById("blinkingTimerToggle");
   const zoomResultsImageToggle = document.getElementById("zoomResultsImageToggle");
   const autoSubmitAtOneToggle = document.getElementById("autoSubmitAtOneToggle");
+  const yearMarkersToggle = document.getElementById("yearMarkersToggle");
 
   function loadSettings() {
     chrome.storage.local.get(
@@ -11,12 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
         blinkingTimer: false,
         zoomResultsImage: false,
         autoSubmitAtOne: false,
+        yearMarkers: false,
       },
       (items) => {
         removeAdsToggle.checked = items.removeAds;
         blinkingTimerToggle.checked = items.blinkingTimer;
         zoomResultsImageToggle.checked = items.zoomResultsImage;
         autoSubmitAtOneToggle.checked = items.autoSubmitAtOne;
+        yearMarkersToggle.checked = items.yearMarkers;
       }
     );
   }
@@ -28,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         blinkingTimer: blinkingTimerToggle.checked,
         zoomResultsImage: zoomResultsImageToggle.checked,
         autoSubmitAtOne: autoSubmitAtOneToggle.checked,
+        yearMarkers: yearMarkersToggle.checked,
       },
       async () => {
         const [tab] = await chrome.tabs.query({
@@ -48,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   blinkingTimerToggle.addEventListener("change", saveSettings);
   zoomResultsImageToggle.addEventListener("change", saveSettings);
   autoSubmitAtOneToggle.addEventListener("change", saveSettings);
+  yearMarkersToggle.addEventListener("change", saveSettings);
 
   loadSettings();
 });

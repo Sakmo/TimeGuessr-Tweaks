@@ -243,6 +243,45 @@
     }
   }
 
+  function removeYearMarkers() {
+  const existing = document.getElementById("tgYearMarkersOverlay");
+  if (existing) {
+    existing.remove();
+  }
+}
+
+function applyYearMarkers() {
+  const target = document.getElementById("demo");
+  if (!target) return;
+
+  target.style.setProperty(
+    "text-shadow",
+    "-0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000",
+    "important"
+  );
+
+  if (!yearMarkersEnabled) {
+    target.style.removeProperty("background-image");
+    target.style.removeProperty("background-size");
+    target.style.removeProperty("background-repeat");
+    target.style.removeProperty("background-position");
+    return;
+  }
+
+  const lines = [];
+  for (let n = 10; n < 126; n += 10) {
+    const percent = (n / 126) * 100;
+    lines.push(
+      `linear-gradient(to right, transparent calc(${percent}% - 1px), #ffaaaa calc(${percent}% - 1px), #ffaaaa calc(${percent}% + 1px), transparent calc(${percent}% + 1px))`
+    );
+  }
+
+  target.style.backgroundImage = lines.join(", ");
+  target.style.backgroundRepeat = "no-repeat";
+  target.style.backgroundSize = "100% 100%";
+  target.style.backgroundPosition = "0 0";
+}
+
   function applyAllTweaks() {
     applyGeneralTimerTweaks();
 
@@ -255,6 +294,7 @@
     applyBlinkingTimerState();
     applyZoomResultsImageState();
     applyAutoSubmitAtOneState();
+    applyYearMarkers();
   }
 
   function loadSettings(callback) {
@@ -264,12 +304,14 @@
         blinkingTimer: false,
         zoomResultsImage: false,
         autoSubmitAtOne: false,
+        yearMarkers: false,
       },
       (items) => {
         removeAdsEnabled = items.removeAds;
         blinkingTimerEnabled = items.blinkingTimer;
         zoomResultsImageEnabled = items.zoomResultsImage;
         autoSubmitAtOneEnabled = items.autoSubmitAtOne;
+        yearMarkersEnabled = items.yearMarkers;
         if (callback) callback();
       }
     );
