@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "TimeGuessr Tweaks",
+  "version": "0.1.0",
+  "description": "Small tweaks for TimeGuessr: year labels, timed auto-submit, and future challenge sync ideas.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["https://timeguessr.com/*"],
+  "action": {
+    "default_title": "TimeGuessr Tweaks",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://timeguessr.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
