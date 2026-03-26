@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const removeAdsToggle = document.getElementById("removeAdsToggle");
   const blinkingTimerToggle = document.getElementById("blinkingTimerToggle");
   const zoomResultsImageToggle = document.getElementById("zoomResultsImageToggle");
+  const autoSubmitAtOneToggle = document.getElementById("autoSubmitAtOneToggle");
 
   function loadSettings() {
     chrome.storage.local.get(
@@ -9,11 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
         removeAds: true,
         blinkingTimer: false,
         zoomResultsImage: false,
+        autoSubmitAtOne: false,
       },
       (items) => {
         removeAdsToggle.checked = items.removeAds;
         blinkingTimerToggle.checked = items.blinkingTimer;
         zoomResultsImageToggle.checked = items.zoomResultsImage;
+        autoSubmitAtOneToggle.checked = items.autoSubmitAtOne;
       }
     );
   }
@@ -24,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         removeAds: removeAdsToggle.checked,
         blinkingTimer: blinkingTimerToggle.checked,
         zoomResultsImage: zoomResultsImageToggle.checked,
+        autoSubmitAtOne: autoSubmitAtOneToggle.checked,
       },
       async () => {
         const [tab] = await chrome.tabs.query({
@@ -43,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
   removeAdsToggle.addEventListener("change", saveSettings);
   blinkingTimerToggle.addEventListener("change", saveSettings);
   zoomResultsImageToggle.addEventListener("change", saveSettings);
+  autoSubmitAtOneToggle.addEventListener("change", saveSettings);
 
   loadSettings();
 });

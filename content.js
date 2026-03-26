@@ -2,7 +2,11 @@
   let removeAdsEnabled = true;
   let blinkingTimerEnabled = false;
   let zoomResultsImageEnabled = false;
+  let autoSubmitAtOneEnabled = false;
+
   let blinkInterval = null;
+  let autoSubmitTimeout = null;
+  let autoSubmitArmedForRound = false;
 
   function getTimerText() {
     const injectTimer = document.getElementById("injectTimer");
@@ -12,8 +16,7 @@
 
   function isUnderTenSeconds(text) {
     if (!text) return false;
-    if (/^0:0[0-9]$/.test(text)) return true;
-    return false;
+    return /^0:0[0-9]$/.test(text);
   }
 
   function stopBlinkingTimer() {
@@ -190,6 +193,56 @@
     }
   }
 
+  function clearAutoSubmitSchedule() {
+    if (autoSubmitTimeout) {
+      clearTimeout(autoSubmitTimeout);
+      autoSubmitTimeout = null;
+    }
+  }
+
+  function resetAutoSubmitRoundStateIfNeeded(timerText) {
+    if (timerText && timerText !== "0:01") {
+      autoSubmitArmedForRound = false;
+    }
+  }
+
+  function triggerGuessButton() {
+    const guessButton = document.getElementById("guessButton");
+    if (!guessButton) return;
+
+    guessButton.click();
+  }
+
+  function applyAutoSubmitAtOneState() {
+    const timerText = getTimerText();
+
+    if (!autoSubmitAtOneEnabled) {
+      clearAutoSubmitSchedule();
+      return;
+    }
+
+    if (!timerText) {
+      clearAutoSubmitSchedule();
+      autoSubmitArmedForRound = false;
+      return;
+    }
+
+    resetAutoSubmitRoundStateIfNeeded(timerText);
+
+    if (timerText === "0:01" && !autoSubmitArmedForRound) {
+      autoSubmitArmedForRound = true;
+      clearAutoSubmitSchedule();
+
+      autoSubmitTimeout = setTimeout(() => {
+        const latestTimerText = getTimerText();
+        if (autoSubmitAtOneEnabled && latestTimerText === "0:01") {
+          triggerGuessButton();
+        }
+        autoSubmitTimeout = null;
+      }, 900);
+    }
+  }
+
   function applyAllTweaks() {
     applyGeneralTimerTweaks();
 
@@ -201,6 +254,7 @@
 
     applyBlinkingTimerState();
     applyZoomResultsImageState();
+    applyAutoSubmitAtOneState();
   }
 
   function loadSettings(callback) {
@@ -209,11 +263,13 @@
         removeAds: true,
         blinkingTimer: false,
         zoomResultsImage: false,
+        autoSubmitAtOne: false,
       },
       (items) => {
         removeAdsEnabled = items.removeAds;
         blinkingTimerEnabled = items.blinkingTimer;
         zoomResultsImageEnabled = items.zoomResultsImage;
+        autoSubmitAtOneEnabled = items.autoSubmitAtOne;
         if (callback) callback();
       }
     );
